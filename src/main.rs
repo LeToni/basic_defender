@@ -1,8 +1,8 @@
 use piston::event_loop::{EventSettings, Events};
 use piston::input::{RenderEvent, UpdateEvent};
 
+use defender::config::GraphicsConfig;
 use defender::App;
-use defender::GraphicsConfig;
 
 fn main() {
     let window = GraphicsConfig::new("Basic Defender", 200, 200);

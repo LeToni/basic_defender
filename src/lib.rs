@@ -1,7 +1,9 @@
 pub mod config;
+pub mod models;
 pub mod utilities;
 
 use config::GraphicsConfig;
+use models::Ship;
 use piston::input::*;
 use piston::window::Window;
 use piston::Button;
@@ -37,27 +39,11 @@ impl App {
 
     pub fn render(&mut self, args: &RenderArgs) {
         use graphics::*;
-
-        let square = rectangle::square(0.0, 0.0, self.ship.size);
-        let (x, y) = (self.ship.x, self.ship.y);
+        let ship = &self.ship;
         self.window.gl.draw(args.viewport(), |c, gl| {
             clear(colors::BLACK, gl);
 
-            let transform = c.transform.trans(x, y);
-
-            rectangle(colors::RED, square, transform, gl);
+            ship.render(&c, gl);
         });
-    }
-}
-
-pub struct Ship {
-    pub x: f64,
-    pub y: f64,
-    pub size: f64,
-}
-
-impl Ship {
-    pub fn new(x: f64, y: f64, size: f64) -> Ship {
-        Ship { x, y, size }
     }
 }

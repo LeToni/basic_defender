@@ -1,9 +1,9 @@
 pub mod config;
+pub mod utilities;
+
 use config::GraphicsConfig;
 use piston::input::{RenderArgs, UpdateArgs};
-
-const GREEN: [f32; 4] = [0.0, 1.0, 0.0, 1.0];
-const RED: [f32; 4] = [1.0, 0.0, 0.0, 1.0];
+use utilities::colors;
 
 pub struct App {
     pub window: GraphicsConfig,
@@ -25,7 +25,7 @@ impl App {
         let rotation = self.rotation;
         let (x, y) = (args.window_size[0] / 2.0, args.window_size[1] / 2.0);
         self.window.gl.draw(args.viewport(), |c, gl| {
-            clear(GREEN, gl);
+            clear(colors::BLACK, gl);
 
             let transform = c
                 .transform
@@ -33,7 +33,7 @@ impl App {
                 .rot_rad(rotation)
                 .trans(-25.0, -25.0);
 
-            rectangle(RED, square, transform, gl);
+            rectangle(colors::RED, square, transform, gl);
         });
     }
 

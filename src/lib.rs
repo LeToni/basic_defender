@@ -17,7 +17,6 @@ impl App {
     pub fn new(window: GraphicsConfig) -> App {
         let size = window.settings.size();
         let (x, y) = ((size.width / 2.0), (size.height / 2.0));
-
         App { window, x, y }
     }
 
@@ -38,19 +37,12 @@ impl App {
 
         let square = rectangle::square(0.0, 0.0, 15.0);
         let (x, y) = (self.x, self.y);
-        // let rotation = self.rotation;
         self.window.gl.draw(args.viewport(), |c, gl| {
             clear(colors::BLACK, gl);
 
             let transform = c.transform.trans(x, y);
-            // .rot_rad(rotation)
-            // .trans(-25.0, -25.0);
 
             rectangle(colors::RED, square, transform, gl);
         });
     }
-
-    // pub fn update(&mut self, args: &UpdateArgs) {
-    //     // self.rotation += 2.0 * args.dt;
-    // }
 }

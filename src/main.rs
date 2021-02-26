@@ -1,5 +1,5 @@
 use piston::event_loop::{EventSettings, Events};
-use piston::input::{RenderEvent, UpdateEvent};
+use piston::input::RenderEvent;
 use piston::PressEvent;
 
 use defender::config::GraphicsConfig;

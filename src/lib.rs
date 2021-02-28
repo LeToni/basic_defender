@@ -2,8 +2,8 @@ pub mod config;
 pub mod models;
 pub mod utilities;
 
+use crate::models::ship::Ship;
 use config::GraphicsConfig;
-use models::Ship;
 use piston::input::*;
 use piston::window::Window;
 use piston::Button;

@@ -1,4 +1,5 @@
 pub mod ship;
+pub mod enemy;
 
 use crate::utilities::geom::Position;
 use graphics::*;

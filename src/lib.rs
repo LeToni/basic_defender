@@ -1,13 +1,13 @@
+pub mod colors;
 pub mod config;
+pub mod geom;
 pub mod models;
-pub mod utilities;
 
 use crate::models::ship::Ship;
 use config::GraphicsConfig;
 use piston::input::*;
 use piston::window::Window;
 use piston::Button;
-use utilities::colors;
 
 pub const UNIT_MOVE: f64 = 10.0;
 

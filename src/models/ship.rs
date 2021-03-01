@@ -1,6 +1,7 @@
 use super::GameObject;
-use crate::utilities::colors;
-use crate::utilities::geom::*;
+use crate::colors;
+use crate::geom;
+use crate::geom::Direction;
 use graphics::{polygon, Context, Transformed};
 use opengl_graphics::GlGraphics;
 use piston::window::Size;
@@ -10,21 +11,21 @@ const SHIP_SIZE: f64 = 20.0;
 const SHIP_DRIFT: f64 = 0.2;
 
 pub struct Ship {
-    pub pos: Position,
+    pub pos: geom::Position,
     pub dir: Direction,
     pub size: f64,
     pub drift_ttl: f64,
-    move_offset: Position,
+    move_offset: geom::Position,
 }
 
 impl Ship {
     pub fn new(x: f64, y: f64, size: f64) -> Ship {
         Ship {
-            pos: Position::new(x, y),
+            pos: geom::Position::new(x, y),
             dir: Direction::EAST,
             size: SHIP_SIZE,
             drift_ttl: 0.0,
-            move_offset: Position::new(0.0, 0.0),
+            move_offset: geom::Position::new(0.0, 0.0),
         }
     }
 
@@ -50,7 +51,7 @@ impl Ship {
 }
 
 impl GameObject for Ship {
-    fn position(&self) -> &Position {
+    fn position(&self) -> &geom::Position {
         &self.position()
     }
 

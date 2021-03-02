@@ -1,7 +1,7 @@
-pub mod ship;
 pub mod enemy;
+pub mod ship;
 
-use crate::utilities::geom::Position;
+use crate::geom::Position;
 use graphics::*;
 use opengl_graphics::GlGraphics;
 use piston::window::Size;

@@ -1,5 +1,9 @@
 use super::GameObject;
+use crate::colors;
 use crate::geom;
+use graphics::{rectangle, Context, Transformed};
+use opengl_graphics::GlGraphics;
+use piston::window::Size;
 use rand;
 use rand::Rng;
 
@@ -28,5 +32,41 @@ impl Enemy {
         let randx = rng.gen_range(0.0..max_x);
         let randy = rng.gen_range(0.0..max_y);
         Enemy::new(randx, randy)
+    }
+}
+
+impl GameObject for Enemy {
+    fn position(&self) -> &geom::Position {
+        &self.position()
+    }
+
+    fn radius(&self) -> f64 {
+        self.size / 2.0
+    }
+
+    fn render(&self, context: &Context, gl: &mut GlGraphics) {
+        let square = rectangle::square(0.0, 0.0, self.size);
+        let radius = self.radius();
+        let transform = context
+            .transform
+            .trans(self.pos.x, self.pos.y)
+            .trans(-radius, -radius);
+
+        rectangle(colors::GREEN, square, transform, gl);
+    }
+
+    fn update(&mut self, dt: f64, size: Size) {
+        self.move_ttl = self.move_ttl - dt;
+        if self.move_ttl <= 0.0 {
+            let radius = self.radius();
+            let mut rng = rand::thread_rng();
+
+            self.pos.x = self.pos.x + rng.gen_range(0.0..MOVE_RADIUS * 2.0) - MOVE_RADIUS;
+            self.pos.y = self.pos.y + rng.gen_range(0.0..MOVE_RADIUS * 2.0) - MOVE_RADIUS;
+
+            geom::restrict_to_bounds(&mut self.pos, [radius, radius, size.width, size.height]);
+
+            self.move_ttl = MOVE_TTL;
+        }
     }
 }

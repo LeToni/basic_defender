@@ -61,4 +61,9 @@ impl App {
             ship.render(&c, gl);
         });
     }
+
+    pub fn update(&mut self, args: UpdateArgs) {
+        let size = self.window.size;
+        self.ship.update(args.dt, size)
+    }
 }

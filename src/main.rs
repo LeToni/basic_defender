@@ -22,5 +22,9 @@ fn main() {
         if let Some(args) = e.render_args() {
             app.render(&args);
         }
+
+        if let Some(u) = e.update_args() {
+            app.update(u);
+        }
     }
 }

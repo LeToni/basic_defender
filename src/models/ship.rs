@@ -7,7 +7,7 @@ use opengl_graphics::GlGraphics;
 use piston::window::Size;
 
 const SHIP_SPEED: f64 = 2.0;
-const SHIP_SIZE: f64 = 20.0;
+const SHIP_SIZE: f64 = 15.0;
 const SHIP_DRIFT: f64 = 0.2;
 
 pub struct Ship {
@@ -19,7 +19,7 @@ pub struct Ship {
 }
 
 impl Ship {
-    pub fn new(x: f64, y: f64, size: f64) -> Ship {
+    pub fn new(x: f64, y: f64) -> Ship {
         Ship {
             pos: geom::Position::new(x, y),
             dir: Direction::EAST,
@@ -52,7 +52,7 @@ impl Ship {
 
 impl GameObject for Ship {
     fn position(&self) -> &geom::Position {
-        &self.position()
+        &self.pos
     }
 
     fn radius(&self) -> f64 {

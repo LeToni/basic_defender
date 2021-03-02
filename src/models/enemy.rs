@@ -37,7 +37,7 @@ impl Enemy {
 
 impl GameObject for Enemy {
     fn position(&self) -> &geom::Position {
-        &self.position()
+        &self.pos
     }
 
     fn radius(&self) -> f64 {

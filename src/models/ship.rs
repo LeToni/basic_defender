@@ -81,7 +81,7 @@ impl GameObject for Ship {
         shape.draw(&points, &context.draw_state, transform, gl);
     }
 
-    fn update(&mut self, dt: f64, size: Size) {
+    fn update(&mut self, dt: f64, size: &Size) {
         let radius = self.radius();
 
         self.pos.x = self.pos.x + self.move_offset.x;

@@ -5,7 +5,7 @@ pub mod models;
 
 use crate::models::GameObject;
 // use crate::models::bullet::Bullet;
-// use crate::models::enemy::Enemy;
+use crate::models::enemy::Enemy;
 use crate::models::ship::Ship;
 use config::GraphicsConfig;
 use piston::input::*;
@@ -17,7 +17,7 @@ pub const UNIT_MOVE: f64 = 10.0;
 pub struct App {
     pub window: GraphicsConfig,
     pub ship: Ship,
-    // enemies: Vec<Enemy>,
+    enemies: Vec<Enemy>,
     // bullets: Vec<Bullet>,
 }
 
@@ -27,7 +27,11 @@ impl App {
         let (x, y) = ((size.width / 2.0), (size.height / 2.0));
 
         let ship = Ship::new(x, y);
-        App { window, ship }
+        App {
+            window,
+            ship,
+            enemies: Vec::new(),
+        }
     }
 
     pub fn input(&mut self, button: Button, is_press: bool) {
@@ -54,9 +58,15 @@ impl App {
 
     pub fn render(&mut self, args: &RenderArgs) {
         let ship = &self.ship;
+        let enemies = &self.enemies;
+
         self.window.gl.draw(args.viewport(), |c, gl| {
             use graphics::*;
             clear(colors::BLACK, gl);
+
+            for enemy in enemies.iter() {
+                enemy.render(&c, gl);
+            }
 
             ship.render(&c, gl);
         });
@@ -64,6 +74,12 @@ impl App {
 
     pub fn update(&mut self, args: UpdateArgs) {
         let size = self.window.size;
-        self.ship.update(args.dt, size)
+        self.ship.update(args.dt, &size);
+
+        if self.enemies.is_empty() {
+            for _ in 0..10 {
+                self.enemies.push(Enemy::new_rand(size.width, size.height));
+            }
+        }
     }
 }

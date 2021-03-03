@@ -12,5 +12,5 @@ pub trait GameObject {
     fn radius(&self) -> f64;
 
     fn render(&self, context: &Context, gl: &mut GlGraphics);
-    fn update(&mut self, _: f64, _: Size) {}
+    fn update(&mut self, _: f64, _: &Size) {}
 }

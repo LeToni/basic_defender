@@ -55,7 +55,7 @@ impl GameObject for Enemy {
         rectangle(colors::GREEN, square, transform, gl);
     }
 
-    fn update(&mut self, dt: f64, size: Size) {
+    fn update(&mut self, dt: f64, size: &Size) {
         self.move_ttl = self.move_ttl - dt;
         if self.move_ttl <= 0.0 {
             let radius = self.radius();

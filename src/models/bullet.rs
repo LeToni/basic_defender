@@ -45,7 +45,7 @@ impl GameObject for Bullet {
         ellipse(colors::WHITE, [0.0, 0.0, radius, radius], transform, gl);
     }
 
-    fn update(&mut self, dt: f64, _: Size) {
+    fn update(&mut self, dt: f64, _: &Size) {
         self.ttl = self.ttl - dt;
         // Move the bullet in the direction the player was facing.
         match self.dir {

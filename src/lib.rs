@@ -111,8 +111,16 @@ impl App {
 
         for bullet in &mut self.bullets {
             bullet.update(args.dt, &size);
-        }
 
+            for enemy in &mut self.enemies {
+                if bullet.collides(enemy) {
+                    bullet.ttl = 0.0;
+                    enemy.health = 0;
+                }
+            }
+        }
+        self.bullets.retain(|bullet| bullet.ttl > 0.0);
+        self.enemies.retain(|enemy| enemy.health > 0);
         self.ship.update(args.dt, &size);
 
         if self.enemies.is_empty() {
@@ -120,7 +128,5 @@ impl App {
                 self.enemies.push(Enemy::new_rand(size.width, size.height));
             }
         }
-
-        self.bullets.retain(|bullet| bullet.ttl > 0.0);
     }
 }

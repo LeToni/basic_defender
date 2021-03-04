@@ -2,12 +2,15 @@ pub mod colors;
 pub mod config;
 pub mod geom;
 pub mod models;
+pub mod utils;
 
 use crate::models::bullet::Bullet;
 use crate::models::enemy::Enemy;
 use crate::models::ship::Ship;
 use crate::models::GameObject;
+use crate::utils::{draw_text, draw_text_center};
 use config::GraphicsConfig;
+use opengl_graphics::{GlyphCache, TextureSettings};
 use piston::input::*;
 use piston::window::Window;
 use piston::Button;
@@ -20,16 +23,25 @@ pub struct GameState {
     fire_cooldown: f64,
 }
 
-pub struct App {
+enum GameStatus {
+    Normal,
+    Destroyed,
+    Win,
+}
+
+pub struct App<'a> {
     pub window: GraphicsConfig,
+    glyph_cache: GlyphCache<'a>,
     pub ship: Ship,
     enemies: Vec<Enemy>,
     bullets: Vec<Bullet>,
     state: GameState,
+    status: GameStatus,
+    score: u16,
 }
 
-impl App {
-    pub fn new(window: GraphicsConfig) -> App {
+impl<'a> App<'a> {
+    pub fn new(window: GraphicsConfig) -> App<'a> {
         let size = window.settings.size();
         let (x, y) = ((size.width / 2.0), (size.height / 2.0));
 
@@ -38,13 +50,30 @@ impl App {
             fire_bullets: false,
             fire_cooldown: 0.0,
         };
+
+        let glyph_cache = GlyphCache::new(
+            "./assets/fonts/PxPlus_IBM_VGA8.ttf",
+            (),
+            TextureSettings::new(),
+        )
+        .expect("Unable to load font");
+
         App {
             window,
+            glyph_cache,
             ship,
             enemies: Vec::new(),
             bullets: Vec::new(),
             state,
+            status: GameStatus::Normal,
+            score: 0,
         }
+    }
+
+    fn reset(&mut self) {
+        self.status = GameStatus::Normal;
+        self.score = 0;
+        self.enemies.clear();
     }
 
     pub fn input(&mut self, button: Button, is_press: bool) {
@@ -61,6 +90,11 @@ impl App {
                             self.state.fire_bullets = true;
                         }
                     }
+                    Key::Return => match self.status {
+                        GameStatus::Destroyed => self.reset(),
+                        GameStatus::Win => self.reset(),
+                        _ => (),
+                    },
                     _ => (),
                 }
             }
@@ -79,10 +113,43 @@ impl App {
         let ship = &self.ship;
         let enemies = &self.enemies;
         let bullets = &self.bullets;
+        let score = &self.score;
+        let status = &self.status;
+        let glyph_cache = &mut self.glyph_cache;
+        let size = self.window.size;
 
         self.window.gl.draw(args.viewport(), |c, gl| {
             use graphics::*;
             clear(colors::BLACK, gl);
+            match status {
+                GameStatus::Destroyed => {
+                    draw_text_center(
+                        "YOU DIED!",
+                        32,
+                        [f64::from(size.width), f64::from(size.height)],
+                        glyph_cache,
+                        &c,
+                        gl,
+                    );
+                    return;
+                }
+                GameStatus::Win => {
+                    draw_text_center(
+                        "YOU WIN!",
+                        32,
+                        [f64::from(size.width), f64::from(size.height)],
+                        glyph_cache,
+                        &c,
+                        gl,
+                    );
+                    return;
+                }
+                _ => (),
+            }
+
+            // Render the current score
+            let score_str = format!("Score: {}", score);
+            draw_text(score_str.as_str(), [0.0, 16.0], 16, glyph_cache, &c, gl);
 
             for bullet in bullets.iter() {
                 bullet.render(&c, gl);
@@ -98,6 +165,12 @@ impl App {
 
     pub fn update(&mut self, args: UpdateArgs) {
         let size = self.window.size;
+
+        match self.status {
+            GameStatus::Destroyed => return,
+            GameStatus::Win => return,
+            _ => (),
+        }
 
         if self.state.fire_cooldown > 0.0 {
             self.state.fire_cooldown = self.state.fire_cooldown - args.dt;
@@ -116,6 +189,7 @@ impl App {
                 if bullet.collides(enemy) {
                     bullet.ttl = 0.0;
                     enemy.health = 0;
+                    self.score = self.score + 1;
                 }
             }
         }
@@ -127,6 +201,17 @@ impl App {
             for _ in 0..10 {
                 self.enemies.push(Enemy::new_rand(size.width, size.height));
             }
+        }
+
+        for enemy in &mut self.enemies {
+            enemy.update(args.dt, &size);
+            if enemy.collides(&self.ship) {
+                self.status = GameStatus::Destroyed;
+            }
+        }
+
+        if self.score == 10 {
+            self.status = GameStatus::Win;
         }
     }
 }
